@@ -1,5 +1,5 @@
 -- Run this once to create the database and table
-CREATE DATABASE IF NOT EXISTS college;
+CREATE DATABASE college;
 
 USE college;
 
