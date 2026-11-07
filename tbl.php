@@ -1,6 +1,7 @@
 <?php
 require 'db.php';
 
+// Handle form submission from index.html
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = trim($_POST["name"]);
     $age  = (int) $_POST["age"];
@@ -10,13 +11,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("si", $name, $age);
         $stmt->execute();
         $stmt->close();
-
-        header("Location: form.php");
-        exit;
     }
 }
 
-// all records
+// Fetch all records
 $result = $conn->query("SELECT id, name, age FROM students ORDER BY id DESC");
 ?>
 <!DOCTYPE html>
@@ -25,12 +23,13 @@ $result = $conn->query("SELECT id, name, age FROM students ORDER BY id DESC");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input-Form</title>
+    <title>Student Records</title>
 </head>
 <style>
     body {
         text-align: center;
         margin: auto;
+        font-family: Arial, sans-serif;
     }
 
     table {
@@ -38,19 +37,25 @@ $result = $conn->query("SELECT id, name, age FROM students ORDER BY id DESC");
         border-collapse: collapse;
         min-width: 400px;
     }
+
+    th, td {
+        border: 1px solid #333;
+        padding: 8px 16px;
+    }
+
+    th {
+        background-color: #f0f0f0;
+    }
+
+    a {
+        display: inline-block;
+        margin-top: 15px;
+    }
 </style>
 
 <body>
-    <h1>School login form</h1>
+    <h1>Student Records</h1>
 
-    <h3>Add Record</h3>
-    <form action="form.php" method="POST">
-        Name:<input type="text" name="name" id="name" required><br><br>
-        Age: <input type="number" name="age" id="age" min="1" required><br><br>
-        <button type="submit">SUBMIT</button>
-    </form>
-
-    <h3>Display</h3>
     <table>
         <thead>
             <tr>
@@ -75,6 +80,8 @@ $result = $conn->query("SELECT id, name, age FROM students ORDER BY id DESC");
             <?php endif; ?>
         </tbody>
     </table>
+
+    <a href="index.html">&larr; Back to Form</a>
 </body>
 
 </html>

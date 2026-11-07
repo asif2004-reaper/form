@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input-Form</title>
+</head>
+<style>
+    body {
+        text-align: center;
+        margin: auto;
+        font-family: Arial, sans-serif;
+    }
+</style>
+
+<body>
+    <h1>School login form</h1>
+
+    <h3>Add Record</h3>
+    <form action="tbl.php" method="POST">
+        Name:<input type="text" name="name" id="name" required><br><br>
+        Age: <input type="number" name="age" id="age" min="1" required><br><br>
+        <button type="submit">SUBMIT</button>
+    </form>
+</body>
+
+</html>
