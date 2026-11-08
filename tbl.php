@@ -1,88 +1,46 @@
 <?php
-require 'db.php';
-
-// Handle form submission from index.html
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = trim($_POST["name"]);
-    $age  = (int) $_POST["age"];
-
-    if ($name !== "" && $age > 0) {
-        $stmt = $conn->prepare("INSERT INTO students (name, age) VALUES (?, ?)");
-        $stmt->bind_param("si", $name, $age);
-        $stmt->execute();
-        $stmt->close();
-    }
+/**-- Run this once to create the database and table
+CREATE DATABASE college;
+USE college;
+CREATE TABLE IF NOT EXISTS students (
+    id   INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age  INT          NOT NULL
+); */
+$con = mysqli_connect("localhost", "root", "", "college", 3307);
+if (!$con) {
+    die("Connection failed: " . mysqli_connect_error());
 }
 
-// Fetch all records
-$result = $conn->query("SELECT id, name, age FROM students ORDER BY id DESC");
+if (isset($_POST['name']) && isset($_POST['age'])) {
+    $name = mysqli_real_escape_string($con, $_POST['name']);
+    $age = (int) $_POST['age'];
+
+    mysqli_query($con, "INSERT INTO students(name, age) VALUES('$name', '$age')");
+}
 ?>
-<!DOCTYPE html>
-<html lang="en">
+<h2>Student Entry</h2>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Records</title>
-</head>
-<style>
-    body {
-        text-align: center;
-        margin: auto;
-        font-family: Arial, sans-serif;
-    }
+<form method="post">
+    Name: <input type="text" name="name" required>
+    <br><br>
 
-    table {
-        margin: 0 auto;
-        border-collapse: collapse;
-        min-width: 400px;
-    }
+    Age: <input type="number" name="age" required>
+    <br><br>
 
-    th, td {
-        border: 1px solid #333;
-        padding: 8px 16px;
-    }
+    <button type="submit">Save</button>
+</form>
 
-    th {
-        background-color: #f0f0f0;
-    }
+<h3>Student List</h3>
 
-    a {
-        display: inline-block;
-        margin-top: 15px;
-    }
-</style>
+<?php
+$result = mysqli_query($con, "SELECT * FROM students");
 
-<body>
-    <h1>Student Records</h1>
+while ($row = mysqli_fetch_assoc($result)) {
+    echo $row['id'] . " - " .
+         htmlspecialchars($row['name']) . " - " .
+         $row['age'] . "<br>";
+}
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Age</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if ($result && $result->num_rows > 0): ?>
-                <?php while ($row = $result->fetch_assoc()): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['id']) ?></td>
-                        <td><?= htmlspecialchars($row['name']) ?></td>
-                        <td><?= htmlspecialchars($row['age']) ?></td>
-                    </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="3">No records found</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-
-    <a href="index.html">&larr; Back to Form</a>
-</body>
-
-</html>
-<?php $conn->close(); ?>
+mysqli_close($con);
+?>
